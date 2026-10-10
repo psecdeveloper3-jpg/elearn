@@ -1,0 +1,166 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile information for students, parents, tutors, and admins",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique user identifier matching auth UID" },
+        "name": { "type": "string", "description": "Full name of the user" },
+        "email": { "type": "string", "description": "Email address" },
+        "role": { "type": "string", "enum": ["student", "parent", "tutor", "admin"], "description": "User role in PunjabPrep" },
+        "grade": { "type": "string", "description": "Class/grade: 9th, 10th, 11th, or 12th" },
+        "group": { "type": "string", "description": "Study stream: Pre-Medical, Pre-Engineering, ICS, Arts, General Science" },
+        "targetBoard": { "type": "string", "description": "Target BISE board in Punjab" },
+        "preferredGuide": { "type": "string", "enum": ["mina", "wiki"], "description": "Preferred animated AI guide mascot" },
+        "xp": { "type": "integer", "description": "Experience points earned" },
+        "coins": { "type": "integer", "description": "Virtual coins for streak and flawless quizzes" },
+        "streakDays": { "type": "integer", "description": "Current consecutive active day streak" },
+        "level": { "type": "integer", "description": "Gamification level" },
+        "parentInviteCode": { "type": "string", "description": "Secure code to link student with parent dashboard" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Document creation server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Document last update server timestamp" }
+      },
+      "required": ["id", "name", "email", "role", "createdAt"]
+    },
+    "QuizAttempt": {
+      "title": "QuizAttempt",
+      "description": "Quiz completion record for MCQs or mock tests",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique quiz attempt ID" },
+        "userId": { "type": "string", "description": "User UID who attempted the quiz" },
+        "subject": { "type": "string", "description": "Subject title" },
+        "chapterTitle": { "type": "string", "description": "Chapter name or quiz title" },
+        "score": { "type": "integer", "description": "Total marks scored" },
+        "totalQuestions": { "type": "integer", "description": "Total questions count" },
+        "percentage": { "type": "integer", "description": "Percentage score (0-100)" },
+        "coinsEarned": { "type": "integer", "description": "Coins awarded" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Completion server timestamp" }
+      },
+      "required": ["id", "userId", "subject", "score", "totalQuestions", "timestamp"]
+    },
+    "WrittenSubmission": {
+      "title": "WrittenSubmission",
+      "description": "Written question response graded by AI marking scheme",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Submission ID" },
+        "userId": { "type": "string", "description": "User UID" },
+        "subject": { "type": "string", "description": "Subject name" },
+        "chapterTitle": { "type": "string", "description": "Chapter title" },
+        "questionText": { "type": "string", "description": "Punjab Board subjective question" },
+        "studentAnswer": { "type": "string", "description": "Typed or OCR answer text" },
+        "score": { "type": "integer", "description": "Awarded score" },
+        "maxMarks": { "type": "integer", "description": "Total available marks" },
+        "feedback": { "type": "string", "description": "AI examiner marking comments" },
+        "modelAnswer": { "type": "string", "description": "Exemplary Punjab Board model answer" },
+        "mistakesExplanation": { "type": "string", "description": "Step-by-step mistakes breakdown" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Grading server timestamp" }
+      },
+      "required": ["id", "userId", "subject", "questionText", "studentAnswer", "score", "maxMarks", "timestamp"]
+    },
+    "OralSubmission": {
+      "title": "OralSubmission",
+      "description": "Oral viva test submission graded with speech-to-text and AI evaluation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Oral submission ID" },
+        "userId": { "type": "string", "description": "User UID" },
+        "subject": { "type": "string", "description": "Subject" },
+        "chapterTitle": { "type": "string", "description": "Chapter" },
+        "questionText": { "type": "string", "description": "Oral examination prompt" },
+        "studentTranscript": { "type": "string", "description": "Spoken transcript" },
+        "score": { "type": "integer", "description": "Overall score" },
+        "maxMarks": { "type": "integer", "description": "Max marks" },
+        "clarityScore": { "type": "integer", "description": "Clarity score" },
+        "completenessScore": { "type": "integer", "description": "Completeness score" },
+        "feedback": { "type": "string", "description": "Examiner oral feedback" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Timestamp" }
+      },
+      "required": ["id", "userId", "subject", "questionText", "studentTranscript", "score", "maxMarks", "timestamp"]
+    },
+    "RevisionRecord": {
+      "title": "RevisionRecord",
+      "description": "Spaced repetition tracking record based on the Ebbinghaus forgetting curve",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Revision item ID" },
+        "userId": { "type": "string", "description": "User UID" },
+        "subject": { "type": "string", "description": "Subject" },
+        "topic": { "type": "string", "description": "Topic title" },
+        "masteryLevel": { "type": "integer", "description": "Mastery level percentage (0-100)" },
+        "repetitionCount": { "type": "integer", "description": "Number of revisions completed" },
+        "lastReviewed": { "type": "string", "format": "date-time", "description": "Timestamp of last review" },
+        "nextReviewDate": { "type": "string", "description": "Formatted date for next scheduled review" }
+      },
+      "required": ["id", "userId", "subject", "topic", "masteryLevel", "repetitionCount", "lastReviewed"]
+    },
+    "TutorBooking": {
+      "title": "TutorBooking",
+      "description": "1-on-1 verified tutor session booking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Booking ID" },
+        "userId": { "type": "string", "description": "Student UID" },
+        "tutorId": { "type": "string", "description": "Tutor ID" },
+        "tutorName": { "type": "string", "description": "Tutor full name" },
+        "subject": { "type": "string", "description": "Subject for session" },
+        "date": { "type": "string", "description": "Session date" },
+        "timeSlot": { "type": "string", "description": "Time slot string" },
+        "status": { "type": "string", "enum": ["confirmed", "completed", "cancelled"], "description": "Status" },
+        "notes": { "type": "string", "description": "Student query notes" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Booking server timestamp" }
+      },
+      "required": ["id", "userId", "tutorId", "tutorName", "subject", "date", "timeSlot", "status", "timestamp"]
+    },
+    "ParentReport": {
+      "title": "ParentReport",
+      "description": "Weekly performance report for parents",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Report ID" },
+        "userId": { "type": "string", "description": "Student UID" },
+        "weekLabel": { "type": "string", "description": "Week period label" },
+        "attendanceRate": { "type": "integer", "description": "Lecture attendance %" },
+        "avgScore": { "type": "integer", "description": "Average quiz score %" },
+        "studyHours": { "type": "integer", "description": "Hours spent studying" },
+        "weakTopics": { "type": "string", "description": "Weak topics needing attention" },
+        "strongTopics": { "type": "string", "description": "Mastered topics" },
+        "aiRemarks": { "type": "string", "description": "Mina/Wiki progress advice for parents" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Report generated server timestamp" }
+      },
+      "required": ["id", "userId", "weekLabel", "attendanceRate", "avgScore", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User account profile document"
+    },
+    "/users/{userId}/quizAttempts/{attemptId}": {
+      "schema": "QuizAttempt",
+      "description": "Student quiz attempts"
+    },
+    "/users/{userId}/writtenSubmissions/{submissionId}": {
+      "schema": "WrittenSubmission",
+      "description": "Student written test submissions and AI grading feedback"
+    },
+    "/users/{userId}/oralSubmissions/{submissionId}": {
+      "schema": "OralSubmission",
+      "description": "Student oral speech test submissions"
+    },
+    "/users/{userId}/revisions/{revisionId}": {
+      "schema": "RevisionRecord",
+      "description": "Spaced-repetition revision records"
+    },
+    "/users/{userId}/tutorBookings/{bookingId}": {
+      "schema": "TutorBooking",
+      "description": "Tutor appointments"
+    },
+    "/users/{userId}/parentReports/{reportId}": {
+      "schema": "ParentReport",
+      "description": "Weekly parent progress reports"
+    }
+  }
+}

@@ -1,0 +1,167 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidTimestamp(val) {
+      return val is timestamp && val <= request.time;
+    }
+
+    // --- Entity Validators ---
+
+    function isValidUserProfile(data, userId) {
+      return data.id == userId
+        && data.name is string && data.name.size() >= 2 && data.name.size() <= 100
+        && data.email is string && data.email.size() <= 150
+        && data.role in ['student', 'parent', 'tutor', 'admin']
+        && (!('grade' in data) || (data.grade is string && data.grade.size() <= 20))
+        && (!('group' in data) || (data.group is string && data.group.size() <= 50))
+        && (!('targetBoard' in data) || (data.targetBoard is string && data.targetBoard.size() <= 50))
+        && (!('preferredGuide' in data) || data.preferredGuide in ['mina', 'wiki'])
+        && (!('xp' in data) || data.xp is int)
+        && (!('coins' in data) || data.coins is int)
+        && (!('streakDays' in data) || data.streakDays is int)
+        && (!('level' in data) || data.level is int)
+        && (!('parentInviteCode' in data) || (data.parentInviteCode is string && data.parentInviteCode.size() <= 50))
+        && isValidTimestamp(data.createdAt)
+        && (!('updatedAt' in data) || isValidTimestamp(data.updatedAt));
+    }
+
+    function isValidQuizAttempt(data, userId) {
+      return data.userId == userId
+        && data.id is string && data.id.size() >= 1
+        && data.subject is string && data.subject.size() <= 100
+        && (!('chapterTitle' in data) || (data.chapterTitle is string && data.chapterTitle.size() <= 150))
+        && data.score is int && data.score >= 0
+        && data.totalQuestions is int && data.totalQuestions > 0
+        && (!('percentage' in data) || (data.percentage is int && data.percentage >= 0 && data.percentage <= 100))
+        && (!('coinsEarned' in data) || (data.coinsEarned is int && data.coinsEarned >= 0))
+        && isValidTimestamp(data.timestamp);
+    }
+
+    function isValidWrittenSubmission(data, userId) {
+      return data.userId == userId
+        && data.id is string && data.id.size() >= 1
+        && data.subject is string && data.subject.size() <= 100
+        && (!('chapterTitle' in data) || (data.chapterTitle is string && data.chapterTitle.size() <= 150))
+        && data.questionText is string && data.questionText.size() <= 2000
+        && data.studentAnswer is string && data.studentAnswer.size() <= 5000
+        && data.score is int && data.score >= 0
+        && data.maxMarks is int && data.maxMarks > 0
+        && (!('feedback' in data) || (data.feedback is string && data.feedback.size() <= 3000))
+        && (!('modelAnswer' in data) || (data.modelAnswer is string && data.modelAnswer.size() <= 3000))
+        && (!('mistakesExplanation' in data) || (data.mistakesExplanation is string && data.mistakesExplanation.size() <= 3000))
+        && isValidTimestamp(data.timestamp);
+    }
+
+    function isValidOralSubmission(data, userId) {
+      return data.userId == userId
+        && data.id is string && data.id.size() >= 1
+        && data.subject is string && data.subject.size() <= 100
+        && (!('chapterTitle' in data) || (data.chapterTitle is string && data.chapterTitle.size() <= 150))
+        && data.questionText is string && data.questionText.size() <= 2000
+        && data.studentTranscript is string && data.studentTranscript.size() <= 5000
+        && data.score is int && data.score >= 0
+        && data.maxMarks is int && data.maxMarks > 0
+        && (!('clarityScore' in data) || data.clarityScore is int)
+        && (!('completenessScore' in data) || data.completenessScore is int)
+        && (!('feedback' in data) || (data.feedback is string && data.feedback.size() <= 3000))
+        && isValidTimestamp(data.timestamp);
+    }
+
+    function isValidRevisionRecord(data, userId) {
+      return data.userId == userId
+        && data.id is string && data.id.size() >= 1
+        && data.subject is string && data.subject.size() <= 100
+        && data.topic is string && data.topic.size() <= 150
+        && data.masteryLevel is int && data.masteryLevel >= 0 && data.masteryLevel <= 100
+        && data.repetitionCount is int && data.repetitionCount >= 0
+        && isValidTimestamp(data.lastReviewed)
+        && (!('nextReviewDate' in data) || (data.nextReviewDate is string && data.nextReviewDate.size() <= 50));
+    }
+
+    function isValidTutorBooking(data, userId) {
+      return data.userId == userId
+        && data.id is string && data.id.size() >= 1
+        && data.tutorId is string && data.tutorId.size() <= 100
+        && data.tutorName is string && data.tutorName.size() <= 100
+        && data.subject is string && data.subject.size() <= 100
+        && data.date is string && data.date.size() <= 50
+        && data.timeSlot is string && data.timeSlot.size() <= 50
+        && data.status in ['confirmed', 'completed', 'cancelled']
+        && (!('notes' in data) || (data.notes is string && data.notes.size() <= 1000))
+        && isValidTimestamp(data.timestamp);
+    }
+
+    function isValidParentReport(data, userId) {
+      return data.userId == userId
+        && data.id is string && data.id.size() >= 1
+        && data.weekLabel is string && data.weekLabel.size() <= 50
+        && data.attendanceRate is int && data.attendanceRate >= 0 && data.attendanceRate <= 100
+        && data.avgScore is int && data.avgScore >= 0 && data.avgScore <= 100
+        && (!('studyHours' in data) || data.studyHours is int)
+        && (!('weakTopics' in data) || (data.weakTopics is string && data.weakTopics.size() <= 1000))
+        && (!('strongTopics' in data) || (data.strongTopics is string && data.strongTopics.size() <= 1000))
+        && (!('aiRemarks' in data) || (data.aiRemarks is string && data.aiRemarks.size() <= 2000))
+        && isValidTimestamp(data.timestamp);
+    }
+
+    // --- Access Rules ---
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUserProfile(request.resource.data, userId);
+      allow update: if isOwner(userId) && isValidUserProfile(request.resource.data, userId);
+      allow delete: if isOwner(userId);
+
+      match /quizAttempts/{attemptId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidQuizAttempt(request.resource.data, userId);
+        allow update: if isOwner(userId) && isValidQuizAttempt(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+
+      match /writtenSubmissions/{submissionId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidWrittenSubmission(request.resource.data, userId);
+        allow update: if isOwner(userId) && isValidWrittenSubmission(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+
+      match /oralSubmissions/{submissionId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidOralSubmission(request.resource.data, userId);
+        allow update: if isOwner(userId) && isValidOralSubmission(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+
+      match /revisions/{revisionId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidRevisionRecord(request.resource.data, userId);
+        allow update: if isOwner(userId) && isValidRevisionRecord(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+
+      match /tutorBookings/{bookingId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidTutorBooking(request.resource.data, userId);
+        allow update: if isOwner(userId) && isValidTutorBooking(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+
+      match /parentReports/{reportId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidParentReport(request.resource.data, userId);
+        allow update: if isOwner(userId) && isValidParentReport(request.resource.data, userId);
+        allow delete: if isOwner(userId);
+      }
+    }
+  }
+}

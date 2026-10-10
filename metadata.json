@@ -1,0 +1,6 @@
+{
+  "name": "PunjabPrep",
+  "description": "AI-powered study platform for Punjab Board (Pakistan) Grades 9-12 with textbooks, past papers, video lectures, AI grading, and Mina & Wiki AI guides.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

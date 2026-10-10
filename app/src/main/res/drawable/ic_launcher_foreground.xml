@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer Glow Circle -->
+    <path
+        android:fillColor="#1AFFFFFF"
+        android:pathData="M54,54m-34,0a34,34 0,1 1,68 0a34,34 0,1 1,-68 0" />
+    <!-- Book Base / Pages -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,48C46.5,43.5 37,44 30,46V72C37,70 46.5,69.5 54,74C61.5,69.5 71,70 78,72V46C71,44 61.5,43.5 54,48Z" />
+    <path
+        android:fillColor="#E0F2E9"
+        android:pathData="M54,50C47.5,45.8 39,46.2 33,48V70C39,68.2 47.5,67.8 54,72C60.5,67.8 69,68.2 75,70V48C69,46.2 60.5,45.8 54,50Z" />
+    <!-- Book Spine Divider -->
+    <path
+        android:fillColor="#0B4628"
+        android:pathData="M53,48.5h2v23.5h-2z" />
+    <!-- Golden Graduation Cap / Star on Top -->
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M54,30L72,39L54,47L36,39Z" />
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M44,43.5V51C44,55 64,55 64,51V43.5L54,48Z" />
+    <!-- Spark / Star Symbol -->
+    <path
+        android:fillColor="#FFE082"
+        android:pathData="M54,23L56,28L61,30L56,32L54,37L52,32L47,30L52,28Z" />
+    <!-- Bookmark Ribbon -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M70,39V54L66,51L62,54V39Z" />
+</vector>
